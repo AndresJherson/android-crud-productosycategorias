@@ -3,15 +3,16 @@ package com.example.appcrud.models;
 public class Producto {
     private int id;
     private String nombre;
-    private int categoriaId;
     private double precio;
+    private Categoria categoria;
     private int stock;
     private String url;
 
-    public Producto(int id, String nombre, int categoriaId, double precio, int stock, String url) {
+    public Producto(int id, String nombre, Categoria categoria, double precio, int stock, String url) {
         this.id = id;
         this.nombre = nombre;
-        this.categoriaId = categoriaId;
+        this.precio = precio;
+        this.categoria = categoria;
         this.precio = precio;
         this.stock = stock;
         this.url = url;
@@ -23,11 +24,11 @@ public class Producto {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public int getCategoriaId() { return categoriaId; }
-    public void setCategoriaId(int categoriaId) { this.categoriaId = categoriaId; }
-
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
+
+    public Categoria getCategoria() { return categoria; }
+    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 
     public int getStock() { return stock; }
     public void setStock(int stock) { this.stock = stock; }

@@ -9,14 +9,16 @@
         android:id="@+id/etNombreProducto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre del producto" />
+        android:hint="Nombre del producto"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/etPrecioProducto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Precio"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:layout_marginTop="8dp" />
 
     <EditText
         android:id="@+id/etStockProducto"
@@ -31,11 +33,17 @@
         android:layout_height="wrap_content"
         android:hint="URL de la imagen" />
 
-    <EditText
-        android:id="@+id/etCategoriaIdProducto"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="ID de Categoría"
-        android:inputType="number" />
+        android:text="Categoría"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp" />
+
+    <Spinner
+        android:id="@+id/spinnerCategoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" />
 
 </LinearLayout>

@@ -3,8 +3,11 @@ package com.example.appcrud.ui.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.appcrud.R;
+import com.example.appcrud.models.Categoria;
 import com.example.appcrud.models.Producto;
 import com.example.appcrud.ui.viewmodels.ProductoViewModel;
 
@@ -35,7 +39,6 @@ public class ProductoActivity extends AppCompatActivity {
         adapter = new ProductoAdapter(viewModel);
         recyclerView.setAdapter(adapter);
 
-        // Observando la lista de productos
         viewModel.getProductos().observe(this, productos -> adapter.setProductos(productos));
 
         btnAgregarProducto.setOnClickListener(v -> mostrarDialogoProducto(null));
@@ -55,29 +58,37 @@ public class ProductoActivity extends AppCompatActivity {
         EditText etPrecio = view.findViewById(R.id.etPrecioProducto);
         EditText etStock = view.findViewById(R.id.etStockProducto);
         EditText etUrl = view.findViewById(R.id.etUrlProducto);
-        EditText etCategoriaId = view.findViewById(R.id.etCategoriaIdProducto);
+        Spinner spinnerCategoria = view.findViewById(R.id.spinnerCategoria);
 
-        if (producto != null) {
-            etNombre.setText(producto.getNombre());
-            etPrecio.setText(String.valueOf(producto.getPrecio()));
-            etStock.setText(String.valueOf(producto.getStock()));
-            etUrl.setText(producto.getUrl());
-            etCategoriaId.setText(String.valueOf(producto.getCategoriaId()));
-        }
+        viewModel.getCategorias().observe(this, categorias -> {
+            ArrayAdapter<Categoria> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categorias);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerCategoria.setAdapter(adapter);
+
+            if (producto != null) {
+                etNombre.setText(producto.getNombre());
+                etPrecio.setText(String.valueOf(producto.getPrecio()));
+                etStock.setText(String.valueOf(producto.getStock()));
+                etUrl.setText(producto.getUrl());
+                int pos = categorias.indexOf(producto.getCategoria());
+                spinnerCategoria.setSelection(pos);
+            }
+        });
 
         builder.setView(view);
         builder.setPositiveButton("Guardar", (dialog, which) -> {
+
             String nombre = etNombre.getText().toString();
             double precio = Double.parseDouble(etPrecio.getText().toString());
             int stock = Integer.parseInt(etStock.getText().toString());
             String url = etUrl.getText().toString();
-            int categoriaId = Integer.parseInt(etCategoriaId.getText().toString());
+            Categoria categoriaSeleccionada = (Categoria) spinnerCategoria.getSelectedItem();
 
             if (producto == null) {
-                Producto nuevoProducto = new Producto(0, nombre, categoriaId, precio, stock, url);
+                Producto nuevoProducto = new Producto(0, nombre, categoriaSeleccionada, precio, stock, url);
                 viewModel.agregarProducto(nuevoProducto);
             } else {
-                Producto productoActualizado = new Producto(producto.getId(), nombre, categoriaId, precio, stock, url);
+                Producto productoActualizado = new Producto(producto.getId(), nombre, categoriaSeleccionada, precio, stock, url);
                 viewModel.actualizarProducto(productoActualizado);
             }
         });

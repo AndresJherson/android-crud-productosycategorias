@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -50,7 +51,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     }
 
     class ProductoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombre, tvPrecio, tvStock;
+        TextView tvNombre, tvPrecio, tvCategoria, tvStock;
         ImageView imgProducto;
         Button btnEditar, btnEliminar;
 
@@ -60,6 +61,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             tvPrecio = itemView.findViewById(R.id.tvPrecioProducto);
             tvStock = itemView.findViewById(R.id.tvStockProducto);
             imgProducto = itemView.findViewById(R.id.imgProducto);
+            tvCategoria = itemView.findViewById(R.id.tvCategoriaProducto);
             btnEditar = itemView.findViewById(R.id.btnEditarProducto);
             btnEliminar = itemView.findViewById(R.id.btnEliminarProducto);
         }
@@ -69,10 +71,15 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             tvPrecio.setText("Precio: $" + producto.getPrecio());
             tvStock.setText("Stock: " + producto.getStock());
 
-            // Cargar imagen con Glide/Picasso (Si hay URL válida)
             if (!producto.getUrl().isEmpty()) {
                 Glide.with(itemView.getContext()).load(producto.getUrl()).into(imgProducto);
             }
+
+            viewModel.getCategoriaPorId(producto.getCategoria().getId()).observe((LifecycleOwner) itemView.getContext(), categoria -> {
+                if (categoria != null) {
+                    tvCategoria.setText("Categoría: " + categoria.getNombre());
+                }
+            });
 
             btnEditar.setOnClickListener(v -> {
                 ((ProductoActivity) itemView.getContext()).mostrarDialogoProducto(producto);

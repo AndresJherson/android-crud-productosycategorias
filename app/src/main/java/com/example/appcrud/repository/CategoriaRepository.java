@@ -59,4 +59,21 @@ public class CategoriaRepository {
             return false;
         }
     }
+
+    public Categoria obtenerCategoriaPorId(int id) {
+        String sql = "SELECT * FROM categoria WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Categoria(rs.getInt("id"), rs.getString("nombre"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

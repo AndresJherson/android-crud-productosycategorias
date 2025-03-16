@@ -22,11 +22,27 @@ public class CategoriaRepository {
         return categorias;
     }
 
+    private int obtenerNuevoId() {
+        String sql = "SELECT COALESCE(MAX(id), 0) + 1 FROM categoria";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1; // Retornar 1 si no hay registros
+    }
+
+
     public boolean agregarCategoria(Categoria categoria) {
         String sql = "INSERT INTO categoria (id, nombre) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, categoria.getId());
+            int nuevoId = obtenerNuevoId();
+            stmt.setInt(1, nuevoId);
             stmt.setString(2, categoria.getNombre());
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {

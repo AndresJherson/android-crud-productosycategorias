@@ -40,12 +40,26 @@ public class ProductoRepository {
         return productos;
     }
 
+    private int obtenerNuevoId() {
+        String sql = "SELECT COALESCE(MAX(id), 0) + 1 FROM producto";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1; // Retornar 1 si no hay registros
+    }
 
     public boolean agregarProducto(Producto producto) {
         String sql = "INSERT INTO producto (id, nombre, categoria_id, precio, stock, url) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, producto.getId());
+            int nuevoId = obtenerNuevoId();
+            stmt.setInt(1, nuevoId);
             stmt.setString(2, producto.getNombre());
             stmt.setInt(3, producto.getCategoria().getId());
             stmt.setDouble(4, producto.getPrecio());
